@@ -12,6 +12,7 @@ public class UserGroup extends AbstractUserNode {
 	private List<TreeNode> children;
 
 	public UserGroup(String s) {
+		super();
 		this.name = s;
 		children = new ArrayList<TreeNode>();
 	}
@@ -40,7 +41,7 @@ public class UserGroup extends AbstractUserNode {
 	public int getIndex(TreeNode node) {
 		return children.indexOf(node);
 	}
-	public void setParent(TreeNode p) {
+	public void setParent(AbstractUserNode p) {
 		parent = p;
 	}
 	@Override
@@ -54,8 +55,9 @@ public class UserGroup extends AbstractUserNode {
 
 	@Override
 	public void add(AbstractUserNode t) {
+		this.setUpdateTime();
 		children.add(t);
-
+		t.setParent(this);
 	}
 
 

@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 // Database holds "tables" for each of users, groups, and messages.
@@ -123,4 +125,20 @@ public class Database {
 		}
 		return count/messageCount();
 	}
+
+
+	public ArrayList<AbstractUserNode> getTreeList() {
+		ArrayList<AbstractUserNode> u = new ArrayList<AbstractUserNode>();
+		for (String id : users.keySet()) {
+			u.add(users.get(id));
+		}
+
+		for (String id : groups.keySet()) {
+			u.add(groups.get(id));
+		}
+
+		return u;
+
+	}
+
 }

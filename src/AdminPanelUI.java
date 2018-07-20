@@ -2,6 +2,7 @@ import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -41,10 +42,10 @@ public class AdminPanelUI {
 
 	// Adds all the parts to the jFrame
 	private void initUI() {
-		AbstractUserNode root = new UserGroup("Root");
+		UserGroup root = new UserGroup("Root");
 		focus = root;
 		tree = new JTree(root);
-		db.groupCreate("Root", (UserGroup) root);
+		db.groupCreate("Root", root);
 
 		status = new JLabel();
 		tree.addTreeSelectionListener(new UserTreeListener());
@@ -66,7 +67,7 @@ public class AdminPanelUI {
 
 		GridLayout tCPanelLayout = new GridLayout(2,2,10,10);
 		GridLayout mCPanelLayout = new GridLayout(1,1,10,10);
-		GridLayout bCPanelLayout = new GridLayout(2,2,10,10);
+		GridLayout bCPanelLayout = new GridLayout(3,2,10,10);
 
 		cPanel.setLayout(new BoxLayout(cPanel, BoxLayout.PAGE_AXIS));
 		tCPanel.setLayout(tCPanelLayout);
@@ -94,16 +95,22 @@ public class AdminPanelUI {
 		JButton groupTotal = new JButton("Show Group Total");
 		JButton messageTotal = new JButton("Show Messages Total");
 		JButton positiveMessagePercentage = new JButton("Show Positive Percentage");
+		JButton validateEntries = new JButton("Validate Entries");
+		JButton showLastUpdated = new JButton("Show Last Updated");
 
 		userTotal.addActionListener(new UserCountActionListener());
 		groupTotal.addActionListener(new GroupCountActionListener());
 		messageTotal.addActionListener(new MessageCountActionListener());
 		positiveMessagePercentage.addActionListener(new PositiveMessageActionListener());
+		validateEntries.addActionListener(new ValidateIDActionListener());
+		showLastUpdated.addActionListener(new LastUpdateActionListener());
 
 		bCPanel.add(userTotal);
 		bCPanel.add(groupTotal);
 		bCPanel.add(messageTotal);
 		bCPanel.add(positiveMessagePercentage);
+		bCPanel.add(validateEntries);
+		bCPanel.add(showLastUpdated);
 
 		//Add all components to the control panel
 		cPanel.add(status);
@@ -198,6 +205,44 @@ public class AdminPanelUI {
 		}
 	}
 
+	class ValidateIDActionListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent arg0) {
+			int invalid = 0;
+			// Duplicates are already rejected by the DB
+			ArrayList<AbstractUserNode> nameList = db.getTreeList();
+			for (AbstractUserNode u : nameList) {
+				if (u.toString().contains(" ")) {
+					invalid++;
+				}
+			}
+
+			status.setText(String.format("%d Invalid Entries Found", invalid));
+		}
+	}
+
+	class LastUpdateActionListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent arg0) {
+			long latest = 0;
+			AbstractUserNode lastUpdate = null;
+
+			ArrayList<AbstractUserNode> nameList = db.getTreeList();
+			for (AbstractUserNode u : nameList) {
+				if (u.getLastUpdateTime() > latest) {
+					latest = u.getLastUpdateTime();
+					lastUpdate = u;
+				}
+			}
+
+			if (lastUpdate == null) {
+				status.setText("No Last Update Found");
+			} else {
+				status.setText(String.format("Last updated: %s at %d", lastUpdate.toString(), latest));
+
+			}
+		}
+	}
 }
 
 

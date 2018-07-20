@@ -16,6 +16,7 @@ public class User extends AbstractUserNode{
 	private Window host;
 
 	public User(String name) {
+		super();
 		this.name = name;
 
 		subscriptions = new ArrayList<User>();
@@ -26,6 +27,8 @@ public class User extends AbstractUserNode{
 	}
 
 	public void postUpdates(Message m) {
+		 this.setUpdateTime();
+
 		for (User u : subscribers) {
 			u.updateFeed(m);
 		}
@@ -35,6 +38,8 @@ public class User extends AbstractUserNode{
 	}
 
 	public void followUser(User u) {
+		this.setUpdateTime();
+
 		u.acceptUser(this);
 		subscriptions.add(u);
 		if (host != null) {

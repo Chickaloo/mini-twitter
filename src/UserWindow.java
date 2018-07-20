@@ -14,6 +14,8 @@ class UserWindow implements Window {
 	private JFrame mainFrame;
 	private JTextField followLabel;
 	private JTextField tweetLabel;
+	private JLabel creationLabel;
+	private JLabel updateLabel;
 	private JTextArea following;
 	private JTextArea newsFeed;
 
@@ -26,6 +28,10 @@ class UserWindow implements Window {
 	@Override
 	public void launch() {
 		u.setHost(this);
+
+		creationLabel = new JLabel();
+		creationLabel.setText(String.format("Created at: %d", this.u.getCreationTime()));
+		updateLabel = new JLabel();
 
 		followLabel = new JTextField();
 		JButton followButton = new JButton("Follow User");
@@ -45,7 +51,7 @@ class UserWindow implements Window {
 		mainFrame = new JFrame(userID+"'s Home");
 		mainFrame.setSize(300, 480);
 
-		GridLayout mainFrameLayout = new GridLayout(4,1,10,10);
+		GridLayout mainFrameLayout = new GridLayout(6,1,10,10);
 		GridLayout followPanelLayout = new GridLayout(1,2,10,10);
 		GridLayout tweetPanelLayout = new GridLayout(1,2,10,10);
 
@@ -66,6 +72,8 @@ class UserWindow implements Window {
 		mainFrame.add(followView);
 		mainFrame.add(tweetPanel);
 		mainFrame.add(feedView);
+		mainFrame.add(creationLabel);
+		mainFrame.add(updateLabel);
 
 		update();
 
@@ -75,6 +83,8 @@ class UserWindow implements Window {
 	public void update() {
 		following.setText(u.followsToString());
 		newsFeed.setText(u.messagesToString());
+
+		updateLabel.setText(String.format("Updated at: %d", this.u.getLastUpdateTime()));
 	}
 
 	class FollowActionListener implements ActionListener {
